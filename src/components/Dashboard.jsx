@@ -26,6 +26,25 @@ export default function Dashboard() {
     dispatch(updateSpent(totalExpenses));
   }, [totalExpenses, dispatch]);
 
+  // Determine feedback based on budget adherence
+  const budgetStatus = spent > budget
+    ? 'over'
+    : spent / budget > 0.8
+    ? 'close'
+    : 'within';
+
+  // Feedback message based on budget status
+  const getFeedbackMessage = () => {
+    switch (budgetStatus) {
+      case 'over':
+        return 'You have exceeded your budget! Consider reviewing your expenses.';
+      case 'close':
+        return 'You are close to your budget limit. Keep an eye on your spending.';
+      default:
+        return 'You are within your budget. Great job staying on track!';
+    }
+  };
+
   return (
     <div className="p-4 bg-black h-full">
       <h1 className="text-4xl font-extrabold text-center mb-8 text-white">
@@ -39,7 +58,7 @@ export default function Dashboard() {
           onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.3)')}
         >
           <h2 className="text-lg text-black font-bold">Total Income</h2>
-          <p className="text-xl text-black">${totalIncome}</p>
+          <p className="text-xl text-black">${totalIncome.toFixed(2)}</p>
         </div>
         <div
           className="p-4 bg-gray-300 text-white rounded transition-shadow duration-300"
@@ -48,7 +67,7 @@ export default function Dashboard() {
           onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.3)')}
         >
           <h2 className="text-lg text-black font-bold">Total Expenses</h2>
-          <p className="text-xl text-black">${totalExpenses}</p>
+          <p className="text-xl text-black">${totalExpenses.toFixed(2)}</p>
         </div>
         <div
           className="p-4 bg-gray-300 text-white rounded transition-shadow duration-300"
@@ -57,12 +76,18 @@ export default function Dashboard() {
           onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.3)')}
         >
           <h2 className="text-lg text-black font-bold">Spend / Budget</h2>
-          <p className="text-xl text-black">${spent}/${budget}</p>
+          <p className="text-xl text-black">${spent.toFixed(2)}/${budget.toFixed(2)}</p>
         </div>
       </div>
 
+      {/* Feedback section */}
+      <div className="mt-6 p-4 bg-gray-800 text-white rounded-lg shadow-lg">
+        <h2 className="text-lg font-bold mb-2">Budget Feedback</h2>
+        <p>{getFeedbackMessage()}</p>
+      </div>
+
       {/* Charts for visualizing income and expense details */}
-      <div className="h-3/6 flex justify-center">
+      <div className="h-3/6 flex justify-center mt-6">
         <Chart transactions={transactions} />
       </div>
     </div>
